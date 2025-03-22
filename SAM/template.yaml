@@ -1,0 +1,231 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Api:
+    Cors:
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Origin,Access-Control-Allow-Origin,Accept,X-Requested-With'"
+      AllowMethods: "'GET,POST,DELETE,OPTIONS'"
+      AllowOrigin: "'*'"
+  Function:
+    Timeout: 30
+    Runtime: java17
+    MemorySize: 2048
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        JAVA_TOOL_OPTIONS: -XX:+TieredCompilation -XX:TieredStopAtLevel=1
+        JDBC_CONNECTION: JDBC_CONNECTION
+        JDBC_USER: JDBC_USER
+        JDBC_PASSWORD: JDBC_PASSWORD
+
+Resources:
+  AuthApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.mtgleague.aws.LambdaHandler::handleRequest
+      Events:
+        SignupResource:
+          Type: Api
+          Properties:
+            Path: /auth/signup
+            Method: POST
+        LoginResource:
+          Type: Api
+          Properties:
+            Path: /auth/login
+            Method: POST
+
+  EventsApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.mtgleague.aws.LambdaHandler::handleRequest
+      Events:
+        GetEventRanksResource:
+          Type: Api
+          Properties:
+            Path: /events/{eventId}/ranking
+            Method: GET
+        FindEventByIdResource:
+          Type: Api
+          Properties:
+            Path: /events/{eventId}
+            Method: GET
+        FindMyEventsResource:
+          Type: Api
+          Properties:
+            Path: /events/my-events
+            Method: POST
+        CreateEventResource:
+          Type: Api
+          Properties:
+            Path: /events/new
+            Method: POST
+        DeleteEventResource:
+          Type: Api
+          Properties:
+            Path: /events/delete
+            Method: POST
+        SaveLeagueSubReqResource:
+          Type: Api
+          Properties:
+            Path: /events/register
+            Method: POST
+        KickPlayerResource:
+          Type: Api
+          Properties:
+            Path: /events/{eventId}/kick
+            Method: POST
+        StartEventResource:
+          Type: Api
+          Properties:
+            Path: /events/{eventId}/start
+            Method: POST
+        EditEventResource:
+          Type: Api
+          Properties:
+            Path: /events/edit
+            Method: POST
+
+  LeagueApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.mtgleague.aws.LambdaHandler::handleRequest
+      Events:
+        GetLeaguesResource:
+          Type: Api
+          Properties:
+            Path: /leagues
+            Method: GET
+        FindLeagueResource:
+          Type: Api
+          Properties:
+            Path: /leagues/{leagueId}
+            Method: GET
+        CreateLeagueResource:
+          Type: Api
+          Properties:
+            Path: /leagues/new
+            Method: POST
+        FindMySubbedLeaguesResource:
+          Type: Api
+          Properties:
+            Path: /leagues/my-subs
+            Method: POST
+        GetLeagueRankingResource:
+          Type: Api
+          Properties:
+            Path: /leagues/{leagueId}/ranking
+            Method: GET
+        GetLeagueMembersResource:
+          Type: Api
+          Properties:
+            Path: /leagues/{leagueId}/members
+            Method: GET
+        GetLeagueEventsResource:
+          Type: Api
+          Properties:
+            Path: /leagues/{leagueId}/events
+            Method: GET
+        GetProgrammedEventsResource:
+          Type: Api
+          Properties:
+            Path: /leagues/{leagueId}/program
+            Method: GET
+        SaveLeagueSubReqResource:
+          Type: Api
+          Properties:
+            Path: /leagues/register
+            Method: POST
+        RemoveMemberResource:
+          Type: Api
+          Properties:
+            Path: /leagues/removeMember
+            Method: POST
+        LeaveLeagueResource:
+          Type: Api
+          Properties:
+            Path: /leagues/leave
+            Method: POST
+
+  PlayerApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.mtgleague.aws.LambdaHandler::handleRequest
+      Events:
+        FindPlayerProfileResource:
+          Type: Api
+          Properties:
+            Path: /players/profile
+            Method: POST
+
+  RankingApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.mtgleague.aws.LambdaHandler::handleRequest
+      Events:
+        GetGeneralRankingResource:
+          Type: Api
+          Properties:
+            Path: /ranking
+            Method: GET
+
+  RoundApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.mtgleague.aws.LambdaHandler::handleRequest
+      Events:
+        ConfirmScoreResource:
+          Type: Api
+          Properties:
+            Path: /rounds/save
+            Method: POST
+        GetCurrentRoundResource:
+          Type: Api
+          Properties:
+            Path: /rounds/current
+            Method: POST
+
+  SubRequestsApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.mtgleague.aws.LambdaHandler::handleRequest
+      Events:
+        FindSubsByLeagueIdResource:
+          Type: Api
+          Properties:
+            Path: /subs/league
+            Method: POST
+        FindMyEventSubsResource:
+          Type: Api
+          Properties:
+            Path: /subs/my-subs
+            Method: POST
+        AcceptLeagueSubRequestResource:
+          Type: Api
+          Properties:
+            Path: /subs/league/accept
+            Method: POST
+        DenyLeagueSubRequestResource:
+          Type: Api
+          Properties:
+            Path: /subs/league/deny
+            Method: POST
+        AcceptEventSubRequestResource:
+          Type: Api
+          Properties:
+            Path: /subs/event/accept
+            Method: POST
+        DenyEventSubRequestResource:
+          Type: Api
+          Properties:
+            Path: /subs/event/deny
+            Method: POST

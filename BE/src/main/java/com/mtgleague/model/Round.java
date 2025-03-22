@@ -1,0 +1,40 @@
+package com.mtgleague.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Round {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long idP1;
+    private String nameP1;
+    private String surnameP1;
+    private Long idP2;
+    private String nameP2;
+    private String surnameP2;
+    private int turn;
+
+    private boolean ended; //used to know if this is the current round or not
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id")
+    private Event event;
+
+    private int p1Wins;
+    private int p2Wins;
+
+    public boolean isBye(){
+        return idP2 == null;
+    }
+}
